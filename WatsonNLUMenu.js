@@ -49,7 +49,8 @@ function analyzeOneUrl(url, settings) {
   Logger.log("Sending %s to Watson API for analysis...", url);
   
   const options = buildAPIRequestOptions(url, settings);
-  const response = UrlFetchApp.fetch(settings.endpointUrl, options);
+  const analyzeTextURL = settings.endpointUrl + "/v1/analyze?version=2019-07-12"
+  const response = UrlFetchApp.fetch(analyzeTextURL, options);
   const responseContent = JSON.parse(response.getContentText());
   // Logger.log("Got raw API response: %s", JSON.stringify(responseContent));
   const result = {
@@ -142,10 +143,10 @@ function extractHeadings(data) {
 */
 function readSettings(spreadsheet) {
   const settingsSheet = spreadsheet.getSheetByName("Settings");
-  const coreSettingsRange = settingsSheet.getRange("B4:B5");
+  const coreSettingsRange = settingsSheet.getRange("B8:B9");
   const coreSettings = coreSettingsRange.getValues();
  
-  const userSettingsRange = settingsSheet.getRange("C10:C19");
+  const userSettingsRange = settingsSheet.getRange("C14:C23");
   const userSettings = userSettingsRange.getValues();
 
   const settings = {
@@ -173,7 +174,7 @@ function readSettings(spreadsheet) {
 */
 function readURLs(spreadsheet) {
   const urlsSheet = spreadsheet.getSheetByName("Input URLs");
-  const urlsRange = urlsSheet.getRange("A3:A");
+  const urlsRange = urlsSheet.getRange("A2:A");
   const rawUrls = urlsRange.getValues().map(function(cell) {
     return cell[0];
   });
