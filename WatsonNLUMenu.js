@@ -15,6 +15,7 @@ function analyzeUrls() {
   const spreadsheet = SpreadsheetApp.getActive();
   const settings = readSettings(spreadsheet);
   const urls = readURLs(spreadsheet);
+  Logger.log("Found %s URLs to analyze...", urls.length);
   const results = urls.map(function(url) {
     return analyzeOneUrl(url, settings);
   });
@@ -28,9 +29,12 @@ function analyzeUrls() {
  * @return {Object} The new sheet.
 */
 function addResultsSheet(spreadsheet) {
+
   const formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const sheetName = "Results " + formattedDate;
   const sheetPosition = spreadsheet.getNumSheets();
+
+  Logger.log("Adding new sheet '%s' for results data...", sheetName);
   var resultsSheet = spreadsheet.insertSheet(sheetName, sheetPosition);
   return resultsSheet;
 }
@@ -42,7 +46,7 @@ function addResultsSheet(spreadsheet) {
  * @return {Object} The results of the API call.
 */
 function analyzeOneUrl(url, settings) {
-  Logger.log("Starting analysis of %s...", url);
+  Logger.log("Sending %s to Watson API for analysis...", url);
   
   const options = buildAPIRequestOptions(url, settings);
   const response = UrlFetchApp.fetch(settings.endpointUrl, options);
@@ -191,12 +195,15 @@ function writeResults(results, sheet) {
  resultsDotNotation.forEach(function(result) {
     var row = [ result.retrieved_url ];
     header.slice(1).forEach(function(key) {
-      Logger.log("Result %s, key %s", result, key);
       row.push(result[key] || "");
     });
     newData.push(row);
   });
-  sheet.getRange(1, 1, newData.length, newData[0].length).setValues(newData);
+  const numNewRows = newData.length;
+  const numNewColumns = newData[0].length;
+  Logger.log("Writing %s rows/%s columns to new sheet (including header) ", numNewRows, numNewColumns);
+  
+  sheet.getRange(1, 1, numNewRows, numNewColumns).setValues(newData);
 }
 
 /**
