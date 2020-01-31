@@ -1,5 +1,5 @@
 # watson-to-sheets
-Connect IBM’s powerful Watson APIs to your Google Sheets to get analysis results right inside your spreadsheet.
+Connect your Google Sheets with IBM’s powerful Watson APIs to get powerful machine learning and analysis inside your spreadsheet without writing any code. 
 
 This project adds a new (custom) menu to any Google Sheet that reads data and settings from your spreadsheet and sends it to the Watson APIs. 
 The menu is powered by Google Apps Script (included in this repository), but does not require any coding. 
@@ -12,13 +12,11 @@ This script brings the power of that service to your spreadsheet by reading a li
 
 ### Getting started
 
-First, make a private copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1GcE6Eq9t5txfSS1Qj-Q7nyARVdlzgke_uBouA3nVXSI/) that’s setup to work seamlessly with this script.
+First, make a private copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1PfLuPU4Pel7BcMUkMdzteUcqzpfSnW118xDE0bh-SGk/) that’s setup to work seamlessly with this script using the File->Make a copy menu item. Refresh your new spreadsheet window (completely) and you should see a new Watson NLU menu all the way on the right.
 
-Second, add the code to power your new script by opening the Google Apps Script editor in your new, private copy with the Tools->Script editor menu item. In the new Script editor window, change the name (top left) from “Untitled project” to “Watson Menu” and replace everything in _Code.gs_ by copy and pasting all of [WatsonNLUMenu.js](https://raw.githubusercontent.com/codeburl/watson-to-sheets/master/WatsonNLUMenu.js). Save this new code (File->Save menu item) and close this Script editor window to return to your spreadsheet. Refresh your spreadsheet window and you should see a new Watson NLU menu item.
+Second, follow the steps in the IBM documentation [Getting started with Natural Language Understanding](https://cloud.ibm.com/docs/services/natural-language-understanding?topic=natural-language-understanding-getting-started) to create (or sign into) your IBM Cloud account and add the (free) Lite plan for Natural Language Understanding to your account. Once you’ve added the service to your account you can get the API key and (Endpoint) URL on the IBM Cloud Manage tab (left side) by clicking Show Credentials and copying the two values to your spreadsheet’s first sheet (they go into cells B8 & B9).
 
-Third, follow the steps in the IBM documentation [Getting started with Natural Language Understanding](https://cloud.ibm.com/docs/services/natural-language-understanding?topic=natural-language-understanding-getting-started) to create (or sign into) your IBM Cloud account and add the (free) Lite plan for Natural Language Understanding to your account. Once you’ve added the service to your account you can get the API key and (Endpoint) URL on the IBM Cloud Manage tab by clicking Show Credentials and copying the two values to your spreadsheet’s first sheet (they go into cells B8 & B9).
-
-Fourth, add the URLs you want to analyze to the Input URLs sheet (see the bottom).
+Third, add the URLs you want to analyze to the Input URLs sheet (see the bottom).
 
 Finally, see the analysis results by selecting the Watson NLU->Analyze URLs... menu item and waiting for the new results sheet to be added. You will be prompted to authorize the script the first time you run it.
 
