@@ -20,7 +20,7 @@ Third, follow the steps in the IBM documentation [Getting started with Natural L
 
 Fourth, add the URLs you want to analyze to the Input URLs sheet (see the bottom).
 
-Finally, see the analysis results by selecting the Watson NLU->Analyze URLs... menu item and waiting for the new results sheet to be added.
+Finally, see the analysis results by selecting the Watson NLU->Analyze URLs... menu item and waiting for the new results sheet to be added. You will be prompted to authorize the script the first time you run it.
 
 
 ### Other Implementations
