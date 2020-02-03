@@ -1,41 +1,45 @@
 /**
- * Add a custom menu to this spreadsheet */
+ * @OnlyCurrentDoc
+ * The above annotation limits the access this script has to just this document, which is just what we want */
+
+/**
+ * Add a custom menu to this Google Sheet */
 function onOpen() {
-  const spreadsheet = SpreadsheetApp.getActive();
+  const googleSheet = SpreadsheetApp.getActive();
   const menuItems = [
     {name: "Analyze URLs...", functionName: "analyzeUrls"},
   ];
-  spreadsheet.addMenu("Watson NLU", menuItems);
+  googleSheet.addMenu("Watson NLU", menuItems);
 }
     
 
 /**
  * Call Watson NLU API and send results to new sheet */    
 function analyzeUrls() {
-  const spreadsheet = SpreadsheetApp.getActive();
-  const settings = readSettings(spreadsheet);
-  const urls = readURLs(spreadsheet);
+  const googleSheet = SpreadsheetApp.getActiveSpreadsheet();
+  const settings = readSettings(googleSheet);
+  const urls = readURLs(googleSheet);
   Logger.log("Found %s URLs to analyze...", urls.length);
   const results = urls.map(function(url) {
     return analyzeOneUrl(url, settings);
   });
-  const resultsSheet = addResultsSheet(spreadsheet);
+  const resultsSheet = addResultsSheet(googleSheet);
   writeResults(results, resultsSheet);
 }
 
 /**
  * Add a new, unique sheet to the document to store the results.
- * @param {Object} spreadsheet The spreadsheet under analysis.
+ * @param {Object} googleSheet The Google Sheet under analysis.
  * @return {Object} The new sheet.
 */
-function addResultsSheet(spreadsheet) {
+function addResultsSheet(googleSheet) {
 
   const formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const sheetName = "Results " + formattedDate;
-  const sheetPosition = spreadsheet.getNumSheets();
+  const sheetPosition = googleSheet.getNumSheets();
 
   Logger.log("Adding new sheet '%s' for results data...", sheetName);
-  var resultsSheet = spreadsheet.insertSheet(sheetName, sheetPosition);
+  var resultsSheet = googleSheet.insertSheet(sheetName, sheetPosition);
   return resultsSheet;
 }
 
@@ -138,11 +142,11 @@ function extractHeadings(data) {
 
 /**
  * Read necessary settings from existing Settings sheet 
- * @param {Object} spreadsheet The spreadsheet to analyze.
+ * @param {Object} googleSheet The Google Sheet to analyze.
  * @return {Object} The user-defined and core script settings.
 */
-function readSettings(spreadsheet) {
-  const settingsSheet = spreadsheet.getSheetByName("Settings");
+function readSettings(googleSheet) {
+  const settingsSheet = googleSheet.getSheetByName("Settings");
   const coreSettingsRange = settingsSheet.getRange("B8:B9");
   const coreSettings = coreSettingsRange.getValues();
  
@@ -169,11 +173,11 @@ function readSettings(spreadsheet) {
 
 /**
  * Read URLs to analyze, excluding any empty rows.
- * @param {Object} spreadsheet The spreadsheet to analyze.
+ * @param {Object} googleSheet The Google Sheet to analyze.
  * @return {string[]} The URLs the user wants to analyze this round.
 */
-function readURLs(spreadsheet) {
-  const urlsSheet = spreadsheet.getSheetByName("Input URLs");
+function readURLs(googleSheet) {
+  const urlsSheet = googleSheet.getSheetByName("Input URLs");
   const urlsRange = urlsSheet.getRange("A2:A");
   const rawUrls = urlsRange.getValues().map(function(cell) {
     return cell[0];

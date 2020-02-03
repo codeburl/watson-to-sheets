@@ -1,5 +1,5 @@
 # watson-to-sheets
-Connect your Google Sheets with IBM’s powerful Watson APIs to get powerful machine learning and analysis inside your spreadsheet without writing any code. 
+Connect your Google Sheets with IBM’s Watson  APIs to get sophisticated, AI-powered analysis inside your spreadsheets without writing any code. 
 
 This project adds a new (custom) menu to any Google Sheet that reads data and settings from your spreadsheet and sends it to the Watson APIs. 
 The menu is powered by Google Apps Script (included in this repository), but does not require any coding. 
@@ -8,18 +8,35 @@ The menu is powered by Google Apps Script (included in this repository), but doe
 
 IBM advertises their Natural Language Understanding service as “a cloud native product that uses deep learning to extract metadata from text such as entities, keywords, categories, sentiment, emotion, relations, and syntax.” What that means in practical terms is that this API can analyze webpages and extract information like whether it's positive or negative (sentiment), what it focuses on (categories and concepts), and any people, cities, or organizations that get mentioned (entities).
 
-This script brings the power of that service to your spreadsheet by reading a list of URLs you want to analyze, sending those URLs to IBM following your (configurable) settings, and adding the results in a clearly readable format to a new sheet in your spreadsheet.
+This script brings the power of that service to your spreadsheets by reading a list of URLs you want to analyze, sending those URLs to IBM following your (configurable) settings, and adding the results in a clearly readable format to a new sheet.
 
-### Getting started
+### Getting Started
 
-First, make a private copy of [this spreadsheet](https://docs.google.com/spreadsheets/d/1PfLuPU4Pel7BcMUkMdzteUcqzpfSnW118xDE0bh-SGk/) that’s setup to work seamlessly with this script using the File->Make a copy menu item. Refresh your new spreadsheet window (completely) and you should see a new Watson NLU menu all the way on the right.
+First, make a private copy of [this Google Sheet](https://docs.google.com/spreadsheets/d/1PfLuPU4Pel7BcMUkMdzteUcqzpfSnW118xDE0bh-SGk/) that’s setup to work seamlessly with this script using the _File->Make a copy_ menu item. Refresh the window (completely) with your new document and you should see a *Watson NLU* menu appear all the way on the right. This menu is where you’ll trigger analysis after setup.
 
-Second, follow the steps in the IBM documentation [Getting started with Natural Language Understanding](https://cloud.ibm.com/docs/services/natural-language-understanding?topic=natural-language-understanding-getting-started) to create (or sign into) your IBM Cloud account and add the (free) Lite plan for Natural Language Understanding to your account. Once you’ve added the service to your account you can get the API key and (Endpoint) URL on the IBM Cloud Manage tab (left side) by clicking Show Credentials and copying the two values to your spreadsheet’s first sheet (they go into cells B8 & B9).
+Second, follow the steps in the IBM documentation [Getting started with Natural Language Understanding](https://cloud.ibm.com/docs/services/natural-language-understanding?topic=natural-language-understanding-getting-started) to create and confirm (or sign into) an IBM Cloud account and add the (free) Lite plan for Natural Language Understanding. Now it’s time to get your credentials. Click the Natural Language Understanding entry under Services in [this search](https://cloud.ibm.com/resources?search=natural%20language%20understanding) and the _View full details_ button. This will show you a new page with a Credentials section and a _Show Credentials_ button to the right. Click that button then copy the two values into your first sheet/tab (they go into cells B8 & B9).
 
-Third, add the URLs you want to analyze to the Input URLs sheet (see the bottom).
+Third, add the URLs you want to analyze to the Input URLs sheet/tab. 
 
-Finally, see the analysis results by selecting the Watson NLU->Analyze URLs... menu item and waiting for the new results sheet to be added. You will be prompted to authorize the script the first time you run it.
+Finally, run the analysis and see the results by selecting the _Watson NLU->Analyze URLs..._ menu item. A new sheet/tab will be added as soon as the processing is complete. 
 
+### Authorization ###
+
+![Authorization Required prompt](/images/authorization_required.png)
+
+Google will prompt you to confirm authorization with an _Authorization Required_ popup the first time you run _Analyze URLs..._. Select the _Continue_ button and then the account you want to use. At this point you will see a _This app isn't verified_ warning. Google makes it somewhat difficult for developers to submit simple applications for verifications, so I haven’t.
+
+![Warning from Google that “This app isn't verified”](/images/not_verified.png)
+
+Select the _Advanced_ link and then click the _Go to google-to-sheets Watson NLU Menu (unsafe)_ link. 
+
+![Authorization request from Watson NLU Menu script](/images/permissions_details.png)
+
+Review the actual, limited permissions you are granting to this new script (`google-to-sheets Watson NLU Menu`) inside this new Google Sheet and select the _Allow_ button if you are comfortable with this access. All this script has permission to do is manipulate this specific document and make external calls to the Watson API. That said, you should always be cautious about granting authorization to any new script.
+
+### Review How This Works ###
+
+All the code powering this Google Sheet is available for your review in this repository and from the _Tools->Script editor_ menu item.
 
 ### Other Implementations
 
