@@ -1,13 +1,15 @@
 /**
  * @OnlyCurrentDoc
- * The above annotation limits the access this script has to just this document, which is just what we want */
+ * The above annotation limits the access this script has to just this document, which is just what we want 
+ */
 
 /**
- * Add a custom menu to this Google Sheet */
+ * Add a custom menu to this Google Sheet 
+ */
 function onOpen() {
   const googleSheet = SpreadsheetApp.getActive();
   const menuItems = [
-    {name: "Analyze URLs...", functionName: "analyzeUrls"},
+    {name: "Analyze URLs or Text...", functionName: "analyzeUrlsOrText"},
   ];
   googleSheet.addMenu("Watson NLU", menuItems);
 }
@@ -15,13 +17,13 @@ function onOpen() {
 
 /**
  * Call Watson NLU API and send results to new sheet */    
-function analyzeUrls() {
+function analyzeUrlsOrText() {
   const googleSheet = SpreadsheetApp.getActiveSpreadsheet();
   const settings = readSettings(googleSheet);
-  const urls = readURLs(googleSheet);
-  Logger.log("Found %s URLs to analyze...", urls.length);
-  const results = urls.map(function(url) {
-    return analyzeOneUrl(url, settings);
+  const inputs = readInputs(googleSheet);
+  Logger.log("Found %s inputs to analyze...", inputs.length);
+  const results = inputs.map(function(input) {
+    return submitForAnalysis(input, settings);
   });
   const resultsSheet = addResultsSheet(googleSheet);
   writeResults(results, resultsSheet);
@@ -33,7 +35,6 @@ function analyzeUrls() {
  * @return {Object} The new sheet.
 */
 function addResultsSheet(googleSheet) {
-
   const formattedDate = Utilities.formatDate(new Date(), "GMT", "yyyy-MM-dd'T'HH:mm:ss'Z'");
   const sheetName = "Results " + formattedDate;
   const sheetPosition = googleSheet.getNumSheets();
@@ -43,41 +44,24 @@ function addResultsSheet(googleSheet) {
   return resultsSheet;
 }
 
-/**
- * Call Watson NLU API to analyze supplied URL with provided settings.
- * @param {string} url The URL to analyze.
- * @param {Object} settings The settings to configure the API call.
- * @return {Object} The results of the API call.
-*/
-function analyzeOneUrl(url, settings) {
-  Logger.log("Sending %s to Watson API for analysis...", url);
-  
-  const options = buildAPIRequestOptions(url, settings);
-  const analyzeTextURL = settings.endpointUrl + "/v1/analyze?version=2019-07-12"
-  const response = UrlFetchApp.fetch(analyzeTextURL, options);
-  const responseContent = JSON.parse(response.getContentText());
-  // Logger.log("Got raw API response: %s", JSON.stringify(responseContent));
-  const result = {
-    apiResponse: responseContent,
-  };
-  return result;
-}
+
 
 /**
  * Create configuration for HTTP POST call to Watson NLU API with the provided settings.
- * @param {string} url The URL to analyze.
+ * @param {string} input The URL or text to analyze.
  * @param {Object} settings The settings to configure the API call.
  * @return {Object} The options to use for UrlFetchApp.fetch().
 */
-function buildAPIRequestOptions(url, settings) {
-  const data = {
-    features: configureFeatures(settings),
-    url: url,
-  };
+function buildAPIRequestOptions(input, settings) {
+  var data = { features: configureFeatures(settings) };
+  if (input.substring(0, 4) === "http") {
+    data.url = input;
+  } 
+  else {
+    data.text = input;
+  }
 
-  const headers = {
-    authorization: "Basic " + Utilities.base64Encode("apikey:" + settings.apiKey),
-  };
+  const headers = { authorization: "Basic " + Utilities.base64Encode("apikey:" + settings.apiKey) };
 
   const options = {
     contentType: "application/json",
@@ -141,6 +125,21 @@ function extractHeadings(data) {
 }
 
 /**
+ * Read URLs or text to analyze, excluding any empty rows.
+ * @param {Object} googleSheet The Google Sheet to analyze.
+ * @return {string[]} The URLs or text the user wants to analyze this round.
+*/
+function readInputs(googleSheet) {
+  const urlsSheet = googleSheet.getSheetByName("Input URLs or Text");
+  const urlsRange = urlsSheet.getRange("A2:A");
+  const rawUrls = urlsRange.getValues().map(function(cell) {
+    return cell[0];
+  });
+  const urls = rawUrls.filter(Boolean); // Exclude blanks
+  return urls;
+}
+
+/**
  * Read necessary settings from existing Settings sheet 
  * @param {Object} googleSheet The Google Sheet to analyze.
  * @return {Object} The user-defined and core script settings.
@@ -171,34 +170,54 @@ function readSettings(googleSheet) {
   return settings;
 }
 
+
+
 /**
- * Read URLs to analyze, excluding any empty rows.
- * @param {Object} googleSheet The Google Sheet to analyze.
- * @return {string[]} The URLs the user wants to analyze this round.
+ * Call Watson NLU API to analyze supplied input with provided settings.
+ * @param {string} input The URL or text to analyze.
+ * @param {Object} settings The settings to configure the API call.
+ * @return {Object} The results of the API call.
 */
-function readURLs(googleSheet) {
-  const urlsSheet = googleSheet.getSheetByName("Input URLs");
-  const urlsRange = urlsSheet.getRange("A2:A");
-  const rawUrls = urlsRange.getValues().map(function(cell) {
-    return cell[0];
-  });
-  const urls = rawUrls.filter(Boolean);
-  return urls;
+function submitForAnalysis(input, settings) {
+  var key;
+  if ((input.substring(0, 4) === "http") || (input.length < 31)) {
+    key = input;
+  } 
+  else {
+    key = input.substring(0, 27) + "...";
+  }
+
+  Logger.log("Sending '%s' to Watson API for analysis...", key);
+  
+  const options = buildAPIRequestOptions(input, settings);
+  const analyzeTextURL = settings.endpointUrl + "/v1/analyze?version=2019-07-12"
+  const response = UrlFetchApp.fetch(analyzeTextURL, options);
+  const responseContent = JSON.parse(response.getContentText());
+  // Logger.log("Got raw API response: %s", JSON.stringify(responseContent));
+  const result = {
+    apiResponse: responseContent,
+    key: key,
+  };
+  return result;
 }
 
 /**
  * Add the results to cells in a sheet.
- * @param {Object[]} results The results of the analysis.
+ * @param {Object[]} apiResults The results from the API call.
  * @param {Object} resultsSheet The sheet to add results to.
  */
-function writeResults(results, sheet) {
-  const resultsDotNotation = results.map(function(result) { return _dotNotation(result.apiResponse) });
+function writeResults(apiResults, sheet) {
+  const resultsDotNotation = apiResults.map(function(apiResult) { 
+    var dotted = _dotNotation(apiResult.apiResponse);
+    dotted.key = apiResult.key;
+    return dotted;
+  });
   var header = extractHeadings(resultsDotNotation);
-  header.unshift("URL");
+  header.unshift("URL or Text Input");
   var newData = [ header ]
 
  resultsDotNotation.forEach(function(result) {
-    var row = [ result.retrieved_url ];
+    var row = [ result.key ];
     header.slice(1).forEach(function(key) {
       row.push(result[key] || "");
     });

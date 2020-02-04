@@ -1,14 +1,13 @@
 # watson-to-sheets
-Connect your Google Sheets with IBM’s Watson  APIs to get sophisticated, AI-powered analysis inside your spreadsheets without writing any code. 
+Connect your Google Sheets with IBM’s Watson APIs to get sophisticated, AI-powered analysis inside your spreadsheets without writing any code. 
 
-This project adds a new (custom) menu to any Google Sheet that reads data and settings from your spreadsheet and sends it to the Watson APIs. 
-The menu is powered by Google Apps Script (included in this repository), but does not require any coding. 
+This project adds a new (custom) menu to any Google Sheet that reads data and settings from your spreadsheet and sends it to the Watson APIs. The menu is powered by a Google Apps Script (included in this repository), but does not require any coding. 
 
 ## Watson Natural Language Understanding
 
-IBM advertises their Natural Language Understanding service as “a cloud native product that uses deep learning to extract metadata from text such as entities, keywords, categories, sentiment, emotion, relations, and syntax.” What that means in practical terms is that this API can analyze webpages and extract information like whether it's positive or negative (sentiment), what it focuses on (categories and concepts), and any people, cities, or organizations that get mentioned (entities).
+IBM advertises their Natural Language Understanding service as “a cloud native product that uses deep learning to extract metadata from text such as entities, keywords, categories, sentiment, emotion, relations, and syntax.” What that means in practical terms is that this API can analyze webpages and extract information about its overall sentiment (positive or negative), what it focuses on (categories and concepts), and any people, cities, or organizations that get mentioned (entities). You can check out IBM’s demo [here](http://dte-nlu-demo.mybluemix.net/self-service/home).
 
-This script brings the power of that service to your spreadsheets by reading a list of URLs you want to analyze, sending those URLs to IBM following your (configurable) settings, and adding the results in a clearly readable format to a new sheet.
+This script brings the power of that service to your spreadsheets by reading a list of URLs or cells with text that you want to analyze, sending that data to IBM for analysis following your (configurable) settings, and adding the results in a clearly readable format to a new sheet.
 
 ### Getting Started
 
@@ -16,15 +15,15 @@ First, make a private copy of [this Google Sheet](https://docs.google.com/spread
 
 Second, follow the steps in the IBM documentation [Getting started with Natural Language Understanding](https://cloud.ibm.com/docs/services/natural-language-understanding?topic=natural-language-understanding-getting-started) to create and confirm (or sign into) an IBM Cloud account and add the (free) Lite plan for Natural Language Understanding. Now it’s time to get your credentials. Click the Natural Language Understanding entry under Services in [this search](https://cloud.ibm.com/resources?search=natural%20language%20understanding) and the _View full details_ button. This will show you a new page with a Credentials section and a _Show Credentials_ button to the right. Click that button then copy the two values into your first sheet/tab (they go into cells B8 & B9).
 
-Third, add the URLs you want to analyze to the Input URLs sheet/tab. 
+Third, add the URLs or your own text that you want to analyze to the _Input URLs or Text_ sheet/tab. 
 
-Finally, run the analysis and see the results by selecting the _Watson NLU->Analyze URLs..._ menu item. A new sheet/tab will be added as soon as the processing is complete. 
+Finally, run the analysis and see the results by selecting the _Watson NLU->Analyze URLs or Text..._ menu item. A new sheet/tab will be added as soon as the processing is complete. 
 
 ### Authorization ###
 
 ![Authorization Required prompt](/images/authorization_required.png)
 
-Google will prompt you to confirm authorization with an _Authorization Required_ popup the first time you run _Analyze URLs..._. Select the _Continue_ button and then the account you want to use. At this point you will see a _This app isn't verified_ warning. Google makes it somewhat difficult for developers to submit simple applications for verifications, so I haven’t.
+Google will prompt you to confirm authorization with an _Authorization Required_ popup the first time you run _Analyze URLs or Text..._. Select the _Continue_ button and then the account you want to use. At this point you will see a _This app isn't verified_ warning. Google makes it somewhat difficult for developers to submit simple applications for verifications, so I haven’t.
 
 ![Warning from Google that “This app isn't verified”](/images/not_verified.png)
 
