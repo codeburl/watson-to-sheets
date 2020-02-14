@@ -21,15 +21,17 @@ Finally, run the analysis and see the results by selecting the _Watson NLU->Anal
 
 ### Authorization ###
 
-![Authorization Required prompt](/images/authorization_required.png | width=400px)
+<
+<img src="https://raw.githubusercontent.com/codeburl/watson-to-sheets/master/images/authorization_required.png" width="50%" alt="Authorization Required prompt">
+
 
 Google will prompt you to confirm authorization with an _Authorization Required_ popup the first time you run _Analyze URLs or Text..._. Select the _Continue_ button and then the account you want to use. At this point you will see a _This app isn't verified_ warning. Google makes it somewhat difficult for developers to submit simple applications for verifications, so I haven’t.
 
-![Warning from Google that “This app isn't verified”](/images/not_verified.png | width=600px)
+<img src="https://raw.githubusercontent.com/codeburl/watson-to-sheets/master/images/not_verified.png" width="75%" alt="Warning from Google that 'This App is not verified'">
 
 Select the _Advanced_ link and then click the _Go to google-to-sheets Watson NLU Menu (unsafe)_ link. 
 
-![Authorization request from Watson NLU Menu script](/images/permissions_details.png | width=600px)
+<img src="https://raw.githubusercontent.com/codeburl/watson-to-sheets/master/images/permissions_details.png" width="75%" alt="Authorization request from Watson NLU Menu script">
 
 Review the actual, limited permissions you are granting to this new script (`google-to-sheets Watson NLU Menu`) inside this new Google Sheet and select the _Allow_ button if you are comfortable with this access. All this script has permission to do is manipulate this specific document and make external calls to the Watson API. That said, you should always be cautious about granting authorization to any new script.
 
