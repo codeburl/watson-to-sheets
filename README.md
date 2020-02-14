@@ -21,7 +21,6 @@ Finally, run the analysis and see the results by selecting the _Watson NLU->Anal
 
 ### Authorization ###
 
-<
 <img src="https://raw.githubusercontent.com/codeburl/watson-to-sheets/master/images/authorization_required.png" width="50%" alt="Authorization Required prompt">
 
 
